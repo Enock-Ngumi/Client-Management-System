@@ -22,36 +22,6 @@ namespace CRUDApplication
 
         private void button2_Click(object sender, EventArgs e)
         {
-            {
-                try
-                {
-                    string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        string insertQuery = "INSERT INTO persons firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phonenumber, dateofbirth=@dateofbirth WHERE id=@id";
-                        using (SqlCommand cmd = new SqlCommand(insertQuery, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                            cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                            cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                            cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
-                            cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-                            cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
-                            int count = cmd.ExecuteNonQuery();
-                            if (count > 0)
-                            {
-                                MessageBox.Show("Created Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
             bool isAnyEmpty = false;
             foreach (Control control in this.Controls)
             {
@@ -71,35 +41,38 @@ namespace CRUDApplication
             }
             else
             {
-
-                SqlConnection con = new SqlConnection("Data Source=NGUMI\\SQLEXPRESS;Initial Catalog=persons;Integrated Security=True");
-                con.Open();
-                string insertQuery = "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES(@firstname, @lastname,@email, @phonenumber,@dateofbirth)";
-                SqlCommand cmd = new SqlCommand(insertQuery, con);
-
-                cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
-                cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-
-                int count = cmd.ExecuteNonQuery();
-                con.Close();
-                if (count > 0)
+                try
                 {
-                    MessageBox.Show("Created Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string insertQuery =  insertQuery = "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES(@firstname, @lastname,@email, @phonenumber,@dateofbirth)";
+                        using (SqlCommand cmd = new SqlCommand(insertQuery, connection))
+                        {
+                            cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
+                            cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
+                            cmd.Parameters.AddWithValue("@email", txtEmail.Text);
+                            cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
+                            cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
+                          
+                            int count = cmd.ExecuteNonQuery();
+                            if (count > 0)
+                            {
+                                MessageBox.Show("Created Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                            }
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Error", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                    MessageBox.Show(ex.Message);
                 }
-
-
-
-
             }
+
+            
+          
         }
 
         private void button3_Click(object sender, EventArgs e)
