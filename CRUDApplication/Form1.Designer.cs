@@ -31,6 +31,7 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             button1 = new Button();
             button2 = new Button();
             button3 = new Button();
@@ -49,8 +50,13 @@
             txtPhone = new TextBox();
             txtDob = new TextBox();
             dataGridView1 = new DataGridView();
+            toolStrip1 = new ToolStrip();
+            btnAdd = new ToolStripButton();
+            btnUpdate = new ToolStripButton();
+            btnDelete = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -177,6 +183,7 @@
             label6.Size = new Size(142, 31);
             label6.TabIndex = 10;
             label6.Text = "Date of Birth";
+            label6.Click += label6_Click;
             // 
             // numericUpDown1
             // 
@@ -247,7 +254,7 @@
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.Location = new Point(329, 150);
+            dataGridView1.Location = new Point(341, 150);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -263,12 +270,53 @@
             dataGridView1.Size = new Size(743, 289);
             dataGridView1.TabIndex = 17;
             // 
+            // toolStrip1
+            // 
+            toolStrip1.ImageScalingSize = new Size(20, 20);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { btnAdd, btnUpdate, btnDelete });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(1107, 27);
+            toolStrip1.TabIndex = 19;
+            toolStrip1.Text = "toolStrip1";
+            // 
+            // btnAdd
+            // 
+            btnAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnAdd.Image = (Image)resources.GetObject("btnAdd.Image");
+            btnAdd.ImageTransparentColor = Color.Magenta;
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(29, 24);
+            btnAdd.Text = "ADD";
+            btnAdd.Click += btnAdd_Click;
+            // 
+            // btnUpdate
+            // 
+            btnUpdate.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnUpdate.Image = (Image)resources.GetObject("btnUpdate.Image");
+            btnUpdate.ImageTransparentColor = Color.Magenta;
+            btnUpdate.Name = "btnUpdate";
+            btnUpdate.Size = new Size(29, 24);
+            btnUpdate.Text = "UPDATE";
+            btnUpdate.Click += btnUpdate_Click;
+            // 
+            // btnDelete
+            // 
+            btnDelete.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnDelete.Image = (Image)resources.GetObject("btnDelete.Image");
+            btnDelete.ImageTransparentColor = Color.Magenta;
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(29, 24);
+            btnDelete.Text = "DELETE";
+            btnDelete.Click += btnDelete_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ButtonFace;
             ClientSize = new Size(1107, 643);
+            Controls.Add(toolStrip1);
             Controls.Add(dataGridView1);
             Controls.Add(txtDob);
             Controls.Add(txtPhone);
@@ -291,6 +339,8 @@
             Text = "Client Management System";
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -315,5 +365,9 @@
         private TextBox txtPhone;
         private TextBox txtDob;
         private DataGridView dataGridView1;
+        private ToolStrip toolStrip1;
+        private ToolStripButton btnAdd;
+        private ToolStripButton btnUpdate;
+        private ToolStripButton btnDelete;
     }
 }

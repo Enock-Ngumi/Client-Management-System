@@ -4,12 +4,16 @@ using System.Drawing;
 using System.Configuration;
 using System.Runtime.InteropServices.Marshalling;
 using System.Linq.Expressions;
+using System.Windows.Forms;
+using Client_Management_System;
 
 
 namespace CRUDApplication
 {
     public partial class Form1 : Form
     {
+
+        string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
 
 
 
@@ -19,6 +23,39 @@ namespace CRUDApplication
             InitializeComponent();
             dataGridView1.Visible = false;
         }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadData();
+            UpdateButtonsState();
+        }
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateButtonsState();
+        }
+        private void UpdateButtonsState()
+        {
+            bool rowSelected = dataGridView1.CurrentRow != null;
+
+            btnUpdate.Enabled = rowSelected;
+            btnDelete.Enabled = rowSelected;
+        }
+
+
+
+
+
+        private void LoadData()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Persons", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridView1.DataSource = dt;
+            }
+        }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -47,7 +84,7 @@ namespace CRUDApplication
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        string insertQuery =  insertQuery = "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES(@firstname, @lastname,@email, @phonenumber,@dateofbirth)";
+                        string insertQuery = insertQuery = "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES(@firstname, @lastname,@email, @phonenumber,@dateofbirth)";
                         using (SqlCommand cmd = new SqlCommand(insertQuery, connection))
                         {
                             cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
@@ -55,7 +92,7 @@ namespace CRUDApplication
                             cmd.Parameters.AddWithValue("@email", txtEmail.Text);
                             cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
                             cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-                          
+
                             int count = cmd.ExecuteNonQuery();
                             if (count > 0)
                             {
@@ -71,8 +108,8 @@ namespace CRUDApplication
                 }
             }
 
-            
-          
+
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -184,26 +221,26 @@ namespace CRUDApplication
 
 
 
-        
-                
-            
-            
-        
 
 
 
 
 
 
-    
-    
-            
 
 
 
 
 
-        
+
+
+
+
+
+
+
+
+
 
         private void button5_Click(object sender, EventArgs e)
         {
@@ -234,10 +271,68 @@ namespace CRUDApplication
             {
                 MessageBox.Show(ex.Message);
             }
-           
+
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            {
+                AddEditForm frm = new AddEditForm();
+                frm.ShowDialog();
+
+                LoadData();
+            }
+
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null) return;
+
+            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+
+            AddEditForm frm = new AddEditForm(id);
+            frm.ShowDialog();
+
+            LoadData();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null) return;
+
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to delete this record?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+                string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Persons WHERE Id=@Id", con);
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                LoadData();
+            }
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
+
+
+
+
 
 
 
