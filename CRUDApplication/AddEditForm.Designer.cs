@@ -127,7 +127,7 @@
             label4.AutoSize = true;
             label4.BackColor = SystemColors.ButtonFace;
             label4.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(22, 245);
+            label4.Location = new Point(18, 245);
             label4.Name = "label4";
             label4.Size = new Size(171, 31);
             label4.TabIndex = 10;
@@ -161,7 +161,7 @@
             Controls.Add(txtDob);
             Controls.Add(txtFirstname);
             Name = "AddEditForm";
-            Text = "AddEditForm";
+            Text = "CLIENT FILL FORM";
             Load += AddEditForm_Load;
             ResumeLayout(false);
             PerformLayout();
