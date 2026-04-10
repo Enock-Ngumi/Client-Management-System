@@ -6,12 +6,16 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Linq.Expressions;
 using System.Windows.Forms;
 using Client_Management_System;
+using System;
+using System.Net.Http.Headers;
 
 
 namespace CRUDApplication
 {
     public partial class Form1 : Form
     {
+        int selectedId = 0;
+        DataTable table = new DataTable();
 
         string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
 
@@ -22,6 +26,16 @@ namespace CRUDApplication
         {
             InitializeComponent();
             dataGridView1.Visible = false;
+        }
+       
+       
+        private void ClearFields()
+        {
+            txtFirstname.Clear();
+            txtLastname.Clear();
+            txtEmail.Clear();
+            txtPhone.Clear();
+            txtDob.Clear();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -46,6 +60,15 @@ namespace CRUDApplication
 
         private void LoadData()
         {
+
+            table.Columns.Add("Id", typeof(int));
+            table.Columns.Add("Firstname", typeof(string));
+            table.Columns.Add("Lastname", typeof(string));
+            table.Columns.Add("Email", typeof(string));
+            table.Columns.Add("Phone", typeof(string));
+            table.Columns.Add("Dateofbirth", typeof(string));
+
+            dataGridView1.DataSource = table;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Persons", con);
@@ -184,33 +207,67 @@ namespace CRUDApplication
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                int id = Convert.ToInt32(numericUpDown1.Value);
+                string name = txtFirstname.Text;
+                name = txtLastname.Text;
+                name = txtEmail.Text;
+                name = txtPhone.Text;
+                name = txtDob.Text;
+
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string updateQuery = "UPDATE persons SET firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phonenumber, dateofbirth=@dateofbirth WHERE id=@id";
-                    using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                    string query = "UPDATE persons SET firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phone,dateofbirth=@dateofbirth Where id=@id";
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
+                        cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
                         cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
                         cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
                         cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                        cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
+                        cmd.Parameters.AddWithValue("@phone", txtPhone.Text);
                         cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-                        cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
-                        int count = cmd.ExecuteNonQuery();
-                        if (count > 0)
-                        {
-                            MessageBox.Show("Updated Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+
+                        MessageBox.Show("ID being updated: " + numericUpDown1.Value);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Record Updated Successfully");
+                        }
+                        else
+                        {
+                            MessageBox.Show("No Record Found to Update");
                         }
                     }
                 }
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
+            
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -244,7 +301,11 @@ namespace CRUDApplication
 
         private void button5_Click(object sender, EventArgs e)
         {
-
+            if (dataGridView1.CurrentRow != null)
+            {
+                dataGridView1.Rows.RemoveAt(dataGridView1.CurrentRow.Index);
+                ClearFields();
+            }
             try
             {
                 if (numericUpDown1.Value > 0)
@@ -276,6 +337,8 @@ namespace CRUDApplication
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            table.Rows.Add(selectedId++, txtFirstname.Text, txtLastname.Text, txtEmail.Text, txtPhone.Text, txtDob.Text);
+            ClearFields();
             {
                 AddEditForm frm = new AddEditForm();
                 frm.ShowDialog();
@@ -287,7 +350,15 @@ namespace CRUDApplication
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow == null) return;
+            if (dataGridView1.CurrentRow != null)
+            {
+                dataGridView1.CurrentRow.Cells[1].Value = txtFirstname.Text;
+                dataGridView1.CurrentRow.Cells[1].Value = txtLastname.Text;
+                dataGridView1.CurrentRow.Cells[1].Value = txtEmail.Text;
+                dataGridView1.CurrentRow.Cells[1].Value = txtPhone.Text;
+                dataGridView1.CurrentRow.Cells[1].Value = txtDob.Text;
+
+            }
 
             int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
 
@@ -327,8 +398,46 @@ namespace CRUDApplication
         {
 
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (e.RowIndex >= 0)
+                {
+                    DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                    numericUpDown1.Value = Convert.ToDecimal(row.Cells["id"].Value);
+                    txtFirstname.Text = row.Cells["firstname"].Value.ToString();
+                    txtLastname.Text = row.Cells["lastname"].Value.ToString();
+                    txtPhone.Text = row.Cells["phonenumber"].Value.ToString();
+                    txtDob.Text = row.Cells["dateofbirth"].Value.ToString();
+                    txtEmail.Text = row.Cells["email"].Value.ToString();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void dataGridView1_DataError_1(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            {
+                e.ThrowException = false;
+                MessageBox.Show("Invalid data entered in Grid");
+            }
+        }
     }
 }
+    
+
 
 
 

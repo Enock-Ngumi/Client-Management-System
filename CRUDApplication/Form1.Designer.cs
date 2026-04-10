@@ -36,8 +36,8 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
-            button5 = new Button();
-            label1 = new Label();
+            Delete = new Button();
+            txtId = new Label();
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
@@ -111,28 +111,29 @@
             button4.UseVisualStyleBackColor = false;
             button4.Click += button4_Click;
             // 
-            // button5
+            // Delete
             // 
-            button5.BackColor = Color.Red;
-            button5.Font = new Font("Segoe UI", 13.8F);
-            button5.ForeColor = Color.White;
-            button5.Location = new Point(978, 526);
-            button5.Name = "button5";
-            button5.Size = new Size(117, 44);
-            button5.TabIndex = 4;
-            button5.Text = "Delete";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
+            Delete.BackColor = Color.Red;
+            Delete.Font = new Font("Segoe UI", 13.8F);
+            Delete.ForeColor = Color.White;
+            Delete.Location = new Point(978, 526);
+            Delete.Name = "Delete";
+            Delete.Size = new Size(117, 44);
+            Delete.TabIndex = 4;
+            Delete.Text = "Delete";
+            Delete.UseVisualStyleBackColor = false;
+            Delete.Click += button5_Click;
             // 
-            // label1
+            // txtId
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 13.8F);
-            label1.Location = new Point(43, 88);
-            label1.Name = "label1";
-            label1.Size = new Size(36, 31);
-            label1.TabIndex = 5;
-            label1.Text = "ID";
+            txtId.AutoSize = true;
+            txtId.Font = new Font("Segoe UI", 13.8F);
+            txtId.Location = new Point(43, 88);
+            txtId.Name = "txtId";
+            txtId.Size = new Size(36, 31);
+            txtId.TabIndex = 5;
+            txtId.Text = "ID";
+            txtId.Click += label1_Click;
             // 
             // label2
             // 
@@ -269,6 +270,9 @@
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(743, 289);
             dataGridView1.TabIndex = 17;
+            dataGridView1.CellClick += dataGridView1_CellContentClick;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            dataGridView1.DataError += dataGridView1_DataError_1;
             // 
             // toolStrip1
             // 
@@ -329,8 +333,8 @@
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(button5);
+            Controls.Add(txtId);
+            Controls.Add(Delete);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -351,8 +355,8 @@
         private Button button2;
         private Button button3;
         private Button button4;
-        private Button button5;
-        private Label label1;
+        private Button Delete;
+        private Label txtId;
         private Label label2;
         private Label label3;
         private Label label4;
