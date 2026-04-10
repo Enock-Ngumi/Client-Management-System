@@ -103,7 +103,7 @@ namespace CRUDApplication
             {
                 try
                 {
-                    string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                    
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -159,7 +159,6 @@ namespace CRUDApplication
 
                 try
                 {
-                    string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -310,7 +309,7 @@ namespace CRUDApplication
             {
                 if (numericUpDown1.Value > 0)
                 {
-                    string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                   
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -381,7 +380,7 @@ namespace CRUDApplication
             if (result == DialogResult.Yes)
             {
                 int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
-                string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+                
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
