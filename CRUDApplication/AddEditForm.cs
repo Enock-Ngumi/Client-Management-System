@@ -30,10 +30,10 @@ namespace Client_Management_System
         {
             if (personId > 0)
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM persons WHERE Id=@Id", con);
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM persons WHERE Id=@Id", connection);
                     cmd.Parameters.AddWithValue("@Id", personId);
 
 
@@ -53,9 +53,9 @@ namespace Client_Management_System
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                con.Open();
+                connection.Open();
 
                 SqlCommand cmd;
 
@@ -63,13 +63,13 @@ namespace Client_Management_System
                 {
                     cmd = new SqlCommand(
                         "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES (@firstname, @lastname, @email, @phonenumber, @dateofbirth)",
-                        con);
+                        connection);
                 }
                 else
                 {
                     cmd = new SqlCommand(
                         "UPDATE persons SET firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phonenumber, dateofbirth=@dateofbirth WHERE id=@id",
-                    con);
+                    connection);
                     cmd.Parameters.AddWithValue("@Id", personId);
                 }
 
