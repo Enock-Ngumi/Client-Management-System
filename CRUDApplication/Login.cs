@@ -39,54 +39,30 @@ namespace Client_Management_System
             string username = txtUser.Text;
             string password = txtPass.Text;
 
-            bool loginSuccess = false;
-
-            if (!loginSuccess)
-            {
-                DialogResult result = MessageBox.Show("Wrong username or password.\nDo you want to reset your password?", "Login Failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                
-                if (result == DialogResult.Yes)
-                {
-                    ChangePassword form = new ChangePassword();
-                    form.Username = username;
-                    form.ShowDialog();
-                }
-
-                return;
-            }
-            if (username == "admin" && password == "0000")
-            {
-                MessageBox.Show("Login successful");
-
-            }
-            else
-            {
-                MessageBox.Show("Invalid username or password");
-                AddEditForm form = new AddEditForm();
-                form.Close();
-                this.Close();
-
-
-            }
-            int count = 1;
-
-            if (count == 1)
-            {
-                AddEditForm form = new AddEditForm();
-                form.Show();
-                this.Hide();
-            }
-            else
-            {
-                MessageBox.Show("Invalid login");
-            }
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                string query = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User AND passwordHash=@Pass";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@User", username);
+                command.Parameters.AddWithValue("@Pass", password);
+               
                 connection.Open();
 
+                int count = (int)command.ExecuteScalar();
+
+                if (count >0)
+                {
+                    AddEditForm form = new AddEditForm();
+                    form.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Invalid login");
+                }
 
             }
+            
         }
 
         private void btnforgot_Click(object sender, EventArgs e)
