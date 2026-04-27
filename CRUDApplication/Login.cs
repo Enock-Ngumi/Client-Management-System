@@ -14,72 +14,83 @@ namespace Client_Management_System
 {
     public partial class Login : Form
     {
-        public string Username;
+
         string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+        public static string LoggedInUsername;
 
         public Login()
         {
             InitializeComponent();
-
-        }
-
-        public Login(string User)
-        {
-            InitializeComponent();
-            user.Text = User;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void btnlog_Click(object sender, EventArgs e)
         {
-            string username = txtUser.Text;
-            string password = txtPass.Text;
+            string username = txtUser.Text.Trim();
+            string password = txtPass.Text.Trim();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Enter username and password");
+                return;
+            }
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User AND passwordHash=@Pass";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@User", username);
-                command.Parameters.AddWithValue("@Pass", password);
-               
                 connection.Open();
 
-                int count = (int)command.ExecuteScalar();
+                string query = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User AND PasswordHash=@Pass";
+                SqlCommand cmd = new SqlCommand(query, connection);
 
-                if (count >0)
+                cmd.Parameters.AddWithValue("@User", username);
+                cmd.Parameters.AddWithValue("@Pass", password);
+
+                object result = cmd.ExecuteScalar();
+                int count = (result == null || result == DBNull.Value) ? 0 : Convert.ToInt32(result);
+
+                if (count > 0)
                 {
+
+                    LoggedInUsername = username;
+
+                    MessageBox.Show("Login successful");
+
+
                     AddEditForm form = new AddEditForm();
                     form.Show();
                     this.Hide();
                 }
+            
                 else
                 {
-                    MessageBox.Show("Invalid login");
+                    MessageBox.Show("Invalid username or password");
                 }
 
             }
-            
         }
-
         private void btnforgot_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtUser.Text))
+            string user = txtUser.Text.Trim();
+
+            if (string.IsNullOrEmpty(user))
             {
-                MessageBox.Show("Enter username first");
+                MessageBox.Show("Username is required");
                 return;
             }
 
-            ChangePassword form = new ChangePassword();
+            ChangePassword form = new ChangePassword(user);
+            form.Show();
+            this.Hide();
 
-            form.Username = txtUser.Text;
-
-            form.ShowDialog();
-            
         }
     }
 
 }
+        
+    
+
+
+
+
+    
+
+            

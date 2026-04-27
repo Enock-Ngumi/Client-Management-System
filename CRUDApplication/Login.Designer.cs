@@ -1,4 +1,5 @@
-﻿namespace Client_Management_System
+﻿
+namespace Client_Management_System
 {
     partial class Login
     {
@@ -46,7 +47,7 @@
             user.Size = new Size(106, 28);
             user.TabIndex = 0;
             user.Text = "Username";
-            user.Click += label1_Click;
+            
             // 
             // pass
             // 
@@ -96,6 +97,7 @@
             btnforgot.Text = "FORGOT PASSWORD";
             btnforgot.UseVisualStyleBackColor = true;
             btnforgot.Click += btnforgot_Click;
+
             // 
             // Login
             // 
@@ -113,6 +115,8 @@
             ResumeLayout(false);
             PerformLayout();
         }
+
+      
 
         #endregion
 
