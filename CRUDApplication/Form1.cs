@@ -71,7 +71,7 @@ namespace Client_Management_System
             dataGridView1.DataSource = table;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Persons", con);
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM persons", con);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 

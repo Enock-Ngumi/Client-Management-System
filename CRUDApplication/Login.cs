@@ -38,7 +38,7 @@ namespace Client_Management_System
             {
                 connection.Open();
 
-                string query = "SELECT Role FROM LoginUsers WHERE Username=@User AND PasswordHash=@Pass";
+                string query = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User AND PasswordHash=@Pass";
                 SqlCommand cmd = new SqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@User", username);
