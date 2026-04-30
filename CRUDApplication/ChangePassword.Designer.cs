@@ -102,7 +102,7 @@
             label1.Size = new Size(121, 28);
             label1.TabIndex = 9;
             label1.Text = "USERNAME";
-            label1.Click += label1_Click;
+            
             // 
             // ChangePassword
             // 

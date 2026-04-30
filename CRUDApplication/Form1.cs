@@ -10,7 +10,7 @@ using System;
 using System.Net.Http.Headers;
 
 
-namespace CRUDApplication
+namespace Client_Management_System
 {
     public partial class Form1 : Form
     {
@@ -27,8 +27,8 @@ namespace CRUDApplication
             InitializeComponent();
             dataGridView1.Visible = false;
         }
-       
-       
+
+
         private void ClearFields()
         {
             txtFirstname.Clear();
@@ -103,7 +103,7 @@ namespace CRUDApplication
             {
                 try
                 {
-                    
+
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -248,10 +248,10 @@ namespace CRUDApplication
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-            
 
 
-            
+
+
 
 
 
@@ -309,7 +309,7 @@ namespace CRUDApplication
             {
                 if (numericUpDown1.Value > 0)
                 {
-                   
+
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -380,7 +380,7 @@ namespace CRUDApplication
             if (result == DialogResult.Yes)
             {
                 int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
@@ -432,6 +432,11 @@ namespace CRUDApplication
                 e.ThrowException = false;
                 MessageBox.Show("Invalid data entered in Grid");
             }
+        }
+
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -78,12 +78,12 @@ namespace Client_Management_System
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text);
                 cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
                 cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-                
+
 
                 cmd.ExecuteNonQuery();
             }
 
-            this.Close(); 
+            this.Close();
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Client_Management_System
             {
                 connection.Open();
 
-                string query = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User AND PasswordHash=@Pass";
+                string query = "SELECT Role FROM LoginUsers WHERE Username=@User AND PasswordHash=@Pass";
                 SqlCommand cmd = new SqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@User", username);
@@ -52,10 +52,12 @@ namespace Client_Management_System
 
                     LoggedInUsername = username;
 
+                    Session.CurrentUser = txtUser.Text;
+
                     MessageBox.Show("Login successful");
 
 
-                    AddEditForm form = new AddEditForm();
+                    Mainform form = new Mainform();
                     form.Show();
                     this.Hide();
                 }
