@@ -1,74 +1,55 @@
+using Client_Management_System;
+using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Configuration;
-using System.Runtime.InteropServices.Marshalling;
 using System.Linq.Expressions;
-using System.Windows.Forms;
-using Client_Management_System;
-using System;
 using System.Net.Http.Headers;
-
+using System.Runtime.InteropServices.Marshalling;
+using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Client_Management_System
 {
     public partial class Form1 : Form
     {
-        int selectedId = 0;
-        DataTable table = new DataTable();
+        private Permissions _permissions;
 
-        string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
+        string connectionString =
+            ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
 
-
-
-
-        public Form1()
+        public Form1(Permissions permissions)
         {
             InitializeComponent();
-            dataGridView1.Visible = false;
+            _permissions = permissions;
+
+            ApplyPermissions();
         }
 
-
-        private void ClearFields()
+      
+        private void ApplyPermissions()
         {
-            txtFirstname.Clear();
-            txtLastname.Clear();
-            txtEmail.Clear();
-            txtPhone.Clear();
-            txtDob.Clear();
+            dataGridView1.ReadOnly = !_permissions.CanEditUsers;
+
+            btnCreate.Enabled = _permissions.CanAddUsers;
+            btnUpdating.Enabled = _permissions.CanEditUsers;
+            Delete.Enabled = _permissions.CanDeleteUsers;
+
+            Add.Enabled = _permissions.CanAddUsers;
+            Update.Enabled = _permissions.CanEditUsers;
+            btnDelete.Enabled = _permissions.CanDeleteUsers;
         }
-        private void Form1_Load(object sender, EventArgs e)
+
+        
+        private void Form1_Load_1(object sender, EventArgs e)
         {
             LoadData();
-            UpdateButtonsState();
-        }
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
-        {
-            UpdateButtonsState();
-        }
-        private void UpdateButtonsState()
-        {
-            bool rowSelected = dataGridView1.CurrentRow != null;
-
-            btnUpdate.Enabled = rowSelected;
-            btnDelete.Enabled = rowSelected;
         }
 
-
-
-
-
+        
         private void LoadData()
         {
-
-            table.Columns.Add("Id", typeof(int));
-            table.Columns.Add("Firstname", typeof(string));
-            table.Columns.Add("Lastname", typeof(string));
-            table.Columns.Add("Email", typeof(string));
-            table.Columns.Add("Phone", typeof(string));
-            table.Columns.Add("Dateofbirth", typeof(string));
-
-            dataGridView1.DataSource = table;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM persons", con);
@@ -79,374 +60,178 @@ namespace Client_Management_System
             }
         }
 
+        
+        private void ClearFields()
+        {
+            txtFirstname.Clear();
+            txtLastname.Clear();
+            txtEmail.Clear();
+            txtPhone.Clear();
+            txtDob.Clear();
+        }
 
+        
+        private bool IsValid()
+        {
+            return !string.IsNullOrWhiteSpace(txtFirstname.Text)
+                && !string.IsNullOrWhiteSpace(txtLastname.Text)
+                && !string.IsNullOrWhiteSpace(txtEmail.Text)
+                && !string.IsNullOrWhiteSpace(txtPhone.Text);
+        }
+
+        
+        private void AddPerson()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string query = @"INSERT INTO persons 
+                (firstname, lastname, email, phonenumber, dateofbirth)
+                VALUES (@fn, @ln, @em, @ph, @dob)";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@fn", txtFirstname.Text);
+                    cmd.Parameters.AddWithValue("@ln", txtLastname.Text);
+                    cmd.Parameters.AddWithValue("@em", txtEmail.Text);
+                    cmd.Parameters.AddWithValue("@ph", txtPhone.Text);
+                    cmd.Parameters.AddWithValue("@dob", txtDob.Text);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+       
         private void button2_Click(object sender, EventArgs e)
         {
-            bool isAnyEmpty = false;
-            foreach (Control control in this.Controls)
+            if (!_permissions.CanAddUsers)
             {
-                if (control is TextBox)
-                {
-                    if (control.Text.Length == 0)
-                    {
-                        isAnyEmpty = true;
-                        break;
-
-                    }
-                }
-            }
-            if (isAnyEmpty)
-            {
-                MessageBox.Show("please fill the required form", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                try
-                {
-
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        string insertQuery = insertQuery = "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES(@firstname, @lastname,@email, @phonenumber,@dateofbirth)";
-                        using (SqlCommand cmd = new SqlCommand(insertQuery, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                            cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                            cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                            cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
-                            cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
-
-                            int count = cmd.ExecuteNonQuery();
-                            if (count > 0)
-                            {
-                                MessageBox.Show("Created Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                MessageBox.Show("Access denied.");
+                return;
             }
 
+            if (!IsValid())
+            {
+                MessageBox.Show("Please fill all required fields.");
+                return;
+            }
 
-
+            AddPerson();
+            LoadData();
+            ClearFields();
         }
 
+        
         private void button3_Click(object sender, EventArgs e)
-
         {
-            foreach (Control control in this.Controls)
-            {
-                if (control is TextBox)
-                {
-                    control.Visible = false;
-                }
-                else if (control is NumericUpDown)
-                {
-                    control.Visible = false;
-                }
-                else if (control is Label)
-                {
-                    control.Visible = false;
-                }
-                else
-                {
-                    control.Visible = true;
-                }
-
-                try
-                {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-
-
-
-                        string readQuery = "SELECT * FROM persons";
-                        SqlDataAdapter sda = new SqlDataAdapter(readQuery, connection);
-
-
-                        SqlCommandBuilder cmd = new SqlCommandBuilder(sda);
-                        DataTable dt = new DataTable();
-                        sda.Fill(dt);
-                        dataGridView1.DataSource = dt;
-
-                    }
-
-                }
-
-                catch (SqlException)
-                {
-                    MessageBox.Show("Problem Connecting to the Server", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-
-            }
+            LoadData();
         }
 
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
-            foreach (Control control in this.Controls)
-            {
-                if (control is DataGridView)
-                {
-                    control.Visible = false;
-                }
-                else
-                {
-                    control.Visible = true;
-                }
-            }
+            dataGridView1.Visible = !dataGridView1.Visible;
         }
 
+        
         private void button4_Click(object sender, EventArgs e)
         {
-            try
+            if (!_permissions.CanEditUsers)
             {
-                int id = Convert.ToInt32(numericUpDown1.Value);
-                string name = txtFirstname.Text;
-                name = txtLastname.Text;
-                name = txtEmail.Text;
-                name = txtPhone.Text;
-                name = txtDob.Text;
+                MessageBox.Show("Access denied.");
+                return;
+            }
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string query = @"UPDATE persons SET
+                                firstname=@firstname,
+                                lastname=@lastname,
+                                email=@email,
+                                phonenumber=@phone,
+                                dateofbirth=@dob
+                                WHERE id=@id";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    connection.Open();
-                    string query = "UPDATE persons SET firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phone,dateofbirth=@dateofbirth Where id=@id";
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
-                        cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                        cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                        cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                        cmd.Parameters.AddWithValue("@phone", txtPhone.Text);
-                        cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
+                    cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
+                    cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
+                    cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
+                    cmd.Parameters.AddWithValue("@email", txtEmail.Text);
+                    cmd.Parameters.AddWithValue("@phone", txtPhone.Text);
+                    cmd.Parameters.AddWithValue("@dob", txtDob.Text);
 
-
-                        MessageBox.Show("ID being updated: " + numericUpDown1.Value);
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Record Updated Successfully");
-                        }
-                        else
-                        {
-                            MessageBox.Show("No Record Found to Update");
-                        }
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (dataGridView1.CurrentRow != null)
-            {
-                dataGridView1.Rows.RemoveAt(dataGridView1.CurrentRow.Index);
-                ClearFields();
-            }
-            try
-            {
-                if (numericUpDown1.Value > 0)
-                {
-
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        string deleteQuery = "DELETE FROM persons WHERE id=@id";
-                        using (SqlCommand cmd = new SqlCommand(deleteQuery, connection))
-                        {
-                            cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
-                            int count = cmd.ExecuteNonQuery();
-                            if (count > 0)
-                            {
-                                MessageBox.Show("Deleted Successfully", "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                            }
-                        }
-                    }
+                    cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-        }
-
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            table.Rows.Add(selectedId++, txtFirstname.Text, txtLastname.Text, txtEmail.Text, txtPhone.Text, txtDob.Text);
-            ClearFields();
-            {
-                AddEditForm frm = new AddEditForm();
-                frm.ShowDialog();
-
-                LoadData();
-            }
-
-        }
-
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            if (dataGridView1.CurrentRow != null)
-            {
-                dataGridView1.CurrentRow.Cells[1].Value = txtFirstname.Text;
-                dataGridView1.CurrentRow.Cells[1].Value = txtLastname.Text;
-                dataGridView1.CurrentRow.Cells[1].Value = txtEmail.Text;
-                dataGridView1.CurrentRow.Cells[1].Value = txtPhone.Text;
-                dataGridView1.CurrentRow.Cells[1].Value = txtDob.Text;
-
-            }
-
-            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
-
-            AddEditForm frm = new AddEditForm(id);
-            frm.ShowDialog();
 
             LoadData();
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+       
+        private void button5_Click(object sender, EventArgs e)
         {
+            if (!_permissions.CanDeleteUsers)
+            {
+                MessageBox.Show("Access denied.");
+                return;
+            }
+
             if (dataGridView1.CurrentRow == null) return;
 
-            DialogResult result = MessageBox.Show(
-                "Are you sure you want to delete this record?",
-                "Confirm Delete",
-                MessageBoxButtons.YesNo
-            );
+            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
 
-            if (result == DialogResult.Yes)
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("DELETE FROM Persons WHERE Id=@Id", con);
-                    cmd.Parameters.AddWithValue("@Id", id);
-                    cmd.ExecuteNonQuery();
-                }
-
-                LoadData();
+                con.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM persons WHERE Id=@Id", con);
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.ExecuteNonQuery();
             }
+
+            LoadData();
         }
 
-        private void label6_Click(object sender, EventArgs e)
+        
+        private void btnAdd_Click(object sender, EventArgs e)
         {
-
+            button2_Click(sender, e);
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
-
+            button4_Click(sender, e);
         }
 
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            button5_Click(sender, e);
+        }
+
+       
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            try
-            {
-                if (e.RowIndex >= 0)
-                {
-                    DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            if (e.RowIndex < 0) return;
 
-                    numericUpDown1.Value = Convert.ToDecimal(row.Cells["id"].Value);
-                    txtFirstname.Text = row.Cells["firstname"].Value.ToString();
-                    txtLastname.Text = row.Cells["lastname"].Value.ToString();
-                    txtPhone.Text = row.Cells["phonenumber"].Value.ToString();
-                    txtDob.Text = row.Cells["dateofbirth"].Value.ToString();
-                    txtEmail.Text = row.Cells["email"].Value.ToString();
+            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
+            numericUpDown1.Value = Convert.ToDecimal(row.Cells["id"].Value);
+            txtFirstname.Text = row.Cells["firstname"].Value.ToString();
+            txtLastname.Text = row.Cells["lastname"].Value.ToString();
+            txtEmail.Text = row.Cells["email"].Value.ToString();
+            txtPhone.Text = row.Cells["phonenumber"].Value.ToString();
+            txtDob.Text = row.Cells["dateofbirth"].Value.ToString();
         }
 
+        
         private void dataGridView1_DataError_1(object sender, DataGridViewDataErrorEventArgs e)
         {
-            {
-                e.ThrowException = false;
-                MessageBox.Show("Invalid data entered in Grid");
-            }
-        }
-
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-
+            e.ThrowException = false;
+            MessageBox.Show("Invalid data in grid.");
         }
     }
 }
-    
-
-
-
-
-
-
-
-
-

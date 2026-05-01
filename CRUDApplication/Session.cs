@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Client_Management_System
 {
-    internal class Session
+    public static class Session
     {
-        public static string CurrentUser;
+        public static string Username { get; set; }
+        public static string Role { get; set; }
     }
 }

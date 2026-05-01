@@ -33,10 +33,10 @@
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            button4 = new Button();
+            btnHome = new Button();
+            btnCreate = new Button();
+            btnRead = new Button();
+            btnUpdating = new Button();
             Delete = new Button();
             txtId = new Label();
             label2 = new Label();
@@ -52,65 +52,65 @@
             txtDob = new TextBox();
             dataGridView1 = new DataGridView();
             toolStrip1 = new ToolStrip();
-            btnAdd = new ToolStripButton();
-            btnUpdate = new ToolStripButton();
+            Add = new ToolStripButton();
+            Update = new ToolStripButton();
             btnDelete = new ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
+            // btnHome
             // 
-            button1.BackColor = SystemColors.AppWorkspace;
-            button1.Font = new Font("Segoe UI", 13.8F);
-            button1.ForeColor = SystemColors.ButtonHighlight;
-            button1.Location = new Point(43, 526);
-            button1.Name = "button1";
-            button1.Size = new Size(117, 44);
-            button1.TabIndex = 0;
-            button1.Text = "Home";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            btnHome.BackColor = SystemColors.AppWorkspace;
+            btnHome.Font = new Font("Segoe UI", 13.8F);
+            btnHome.ForeColor = SystemColors.ButtonHighlight;
+            btnHome.Location = new Point(43, 526);
+            btnHome.Name = "btnHome";
+            btnHome.Size = new Size(117, 44);
+            btnHome.TabIndex = 0;
+            btnHome.Text = "Home";
+            btnHome.UseVisualStyleBackColor = false;
+            btnHome.Click += button1_Click;
             // 
-            // button2
+            // btnCreate
             // 
-            button2.BackColor = SystemColors.Highlight;
-            button2.Font = new Font("Segoe UI", 13.8F);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(255, 526);
-            button2.Name = "button2";
-            button2.Size = new Size(117, 44);
-            button2.TabIndex = 1;
-            button2.Text = "Create";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            btnCreate.BackColor = SystemColors.Highlight;
+            btnCreate.Font = new Font("Segoe UI", 13.8F);
+            btnCreate.ForeColor = Color.White;
+            btnCreate.Location = new Point(255, 526);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(117, 44);
+            btnCreate.TabIndex = 1;
+            btnCreate.Text = "Create";
+            btnCreate.UseVisualStyleBackColor = false;
+            btnCreate.Click += button2_Click;
             // 
-            // button3
+            // btnRead
             // 
-            button3.BackColor = Color.Green;
-            button3.Font = new Font("Segoe UI", 13.8F);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(511, 526);
-            button3.Name = "button3";
-            button3.Size = new Size(117, 44);
-            button3.TabIndex = 2;
-            button3.Text = "Read";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            btnRead.BackColor = Color.Green;
+            btnRead.Font = new Font("Segoe UI", 13.8F);
+            btnRead.ForeColor = Color.White;
+            btnRead.Location = new Point(511, 526);
+            btnRead.Name = "btnRead";
+            btnRead.Size = new Size(117, 44);
+            btnRead.TabIndex = 2;
+            btnRead.Text = "Read";
+            btnRead.UseVisualStyleBackColor = false;
+            btnRead.Click += button3_Click;
             // 
-            // button4
+            // btnUpdating
             // 
-            button4.BackColor = Color.FromArgb(255, 128, 0);
-            button4.Font = new Font("Segoe UI", 13.8F);
-            button4.ForeColor = Color.White;
-            button4.Location = new Point(736, 526);
-            button4.Name = "button4";
-            button4.Size = new Size(117, 44);
-            button4.TabIndex = 3;
-            button4.Text = "Update";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += button4_Click;
+            btnUpdating.BackColor = Color.FromArgb(255, 128, 0);
+            btnUpdating.Font = new Font("Segoe UI", 13.8F);
+            btnUpdating.ForeColor = Color.White;
+            btnUpdating.Location = new Point(736, 526);
+            btnUpdating.Name = "btnUpdating";
+            btnUpdating.Size = new Size(117, 44);
+            btnUpdating.TabIndex = 3;
+            btnUpdating.Text = "Update";
+            btnUpdating.UseVisualStyleBackColor = false;
+            btnUpdating.Click += button4_Click;
             // 
             // Delete
             // 
@@ -134,7 +134,7 @@
             txtId.Size = new Size(36, 31);
             txtId.TabIndex = 5;
             txtId.Text = "ID";
-            txtId.Click += label1_Click;
+            
             // 
             // label2
             // 
@@ -185,7 +185,7 @@
             label6.Size = new Size(142, 31);
             label6.TabIndex = 10;
             label6.Text = "Date of Birth";
-            label6.Click += label6_Click;
+            
             // 
             // numericUpDown1
             // 
@@ -278,32 +278,32 @@
             // toolStrip1
             // 
             toolStrip1.ImageScalingSize = new Size(20, 20);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { btnAdd, btnUpdate, btnDelete });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { Add, Update, btnDelete });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1107, 27);
             toolStrip1.TabIndex = 19;
             toolStrip1.Text = "toolStrip1";
             // 
-            // btnAdd
+            // Add
             // 
-            btnAdd.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            btnAdd.Image = (Image)resources.GetObject("btnAdd.Image");
-            btnAdd.ImageTransparentColor = Color.Magenta;
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(29, 24);
-            btnAdd.Text = "ADD";
-            btnAdd.Click += btnAdd_Click;
+            Add.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            Add.Image = (Image)resources.GetObject("Add.Image");
+            Add.ImageTransparentColor = Color.Magenta;
+            Add.Name = "Add";
+            Add.Size = new Size(29, 24);
+            Add.Text = "ADD";
+            Add.Click += btnAdd_Click;
             // 
-            // btnUpdate
+            // Update
             // 
-            btnUpdate.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            btnUpdate.Image = (Image)resources.GetObject("btnUpdate.Image");
-            btnUpdate.ImageTransparentColor = Color.Magenta;
-            btnUpdate.Name = "btnUpdate";
-            btnUpdate.Size = new Size(29, 24);
-            btnUpdate.Text = "UPDATE";
-            btnUpdate.Click += btnUpdate_Click;
+            Update.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            Update.Image = (Image)resources.GetObject("Update.Image");
+            Update.ImageTransparentColor = Color.Magenta;
+            Update.Name = "Update";
+            Update.Size = new Size(29, 24);
+            Update.Text = "UPDATE";
+            Update.Click += btnUpdate_Click;
             // 
             // btnDelete
             // 
@@ -336,10 +336,10 @@
             Controls.Add(label2);
             Controls.Add(txtId);
             Controls.Add(Delete);
-            Controls.Add(button4);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnUpdating);
+            Controls.Add(btnRead);
+            Controls.Add(btnCreate);
+            Controls.Add(btnHome);
             Name = "Form1";
             Text = "Client Management System";
             Load += Form1_Load_1;
@@ -353,10 +353,10 @@
 
         #endregion
 
-        private Button button1;
-        private Button button2;
-        private Button button3;
-        private Button button4;
+        private Button btnHome;
+        private Button btnCreate;
+        private Button btnRead;
+        private Button btnUpdating;
         private Button Delete;
         private Label txtId;
         private Label label2;
@@ -372,8 +372,8 @@
         private TextBox txtDob;
         private DataGridView dataGridView1;
         private ToolStrip toolStrip1;
-        private ToolStripButton btnAdd;
-        private ToolStripButton btnUpdate;
+        private ToolStripButton Add;
+        private ToolStripButton Update;
         private ToolStripButton btnDelete;
     }
 }

@@ -33,5 +33,17 @@ namespace Client_Management_System.Properties {
                 return ((string)(this["persons"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SavedUsername {
+            get {
+                return ((string)(this["SavedUsername"]));
+            }
+            set {
+                this["SavedUsername"] = value;
+            }
+        }
     }
 }
