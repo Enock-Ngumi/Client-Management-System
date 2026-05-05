@@ -46,9 +46,12 @@
             // label1
             // 
             label1.AutoSize = true;
+            label1.BackColor = Color.White;
+            label1.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.Blue;
             label1.Location = new Point(42, 40);
             label1.Name = "label1";
-            label1.Size = new Size(101, 20);
+            label1.Size = new Size(122, 23);
             label1.TabIndex = 1;
             label1.Text = "Search Clients";
             // 

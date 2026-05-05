@@ -50,63 +50,55 @@ namespace Client_Management_System
                 return;
             }
 
-            string role;
+            string role = (_isAdmin && chkIsAdmin.Checked) ? "Admin" : "User";
 
-            if (_isAdmin)
+            using (SqlConnection con = new SqlConnection(connectionString))
             {
-                role = chkIsAdmin.Checked ? "Admin" : "User";
-            }
-            else
-            {
-                role = "User";
+                con.Open();
 
-                using (SqlConnection con = new SqlConnection(connectionString))
+                string checkQuery = "SELECT COUNT(*) FROM LoginUser WHERE Username=@User";
+                SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+                checkCmd.Parameters.AddWithValue("@User", username);
+
+                int exists = (int)checkCmd.ExecuteScalar();
+
+                if (exists > 0)
                 {
-                    con.Open();
+                    MessageBox.Show("Username already exists");
+                    return;
+                }
 
-                    string checkQuery = "SELECT COUNT(*) FROM LoginUser WHERE Username = @User";
-                    SqlCommand checkCmd = new SqlCommand(checkQuery, con);
-                    checkCmd.Parameters.AddWithValue("@User", username);
-
-                    int exists = (int)checkCmd.ExecuteScalar();
-
-                    if (exists > 0)
-                    {
-                        MessageBox.Show("Username already exists");
-                        return;
-                    }
-
-                    string insertUser = @"INSERT INTO LoginUser (Username, PasswordHash, Role)
+                string insertUser = @"INSERT INTO LoginUser (Username, PasswordHash, Role)
                               OUTPUT INSERTED.Id
                               VALUES (@User, @Pass, @Role)";
 
-                    SqlCommand cmdUser = new SqlCommand(insertUser, con);
-                    cmdUser.Parameters.AddWithValue("@User", username);
-                    cmdUser.Parameters.AddWithValue("@Pass", PasswordHelper.HashPassword(password));
-                    cmdUser.Parameters.AddWithValue("@Role", role);
+                SqlCommand cmdUser = new SqlCommand(insertUser, con);
+                cmdUser.Parameters.AddWithValue("@User", username);
+                cmdUser.Parameters.AddWithValue("@Pass", BCrypt.Net.BCrypt.HashPassword(password));
+                cmdUser.Parameters.AddWithValue("@Role", role);
 
-                    int userId = (int)cmdUser.ExecuteScalar();
+                int userId = (int)cmdUser.ExecuteScalar();
 
-                    string insertPerson = @"INSERT INTO persons 
+                string insertPerson = @"INSERT INTO persons 
                                (UserId, firstname, lastname, email, phonenumber, dateofbirth)
                                VALUES (@UserId, @fn, @ln, @em, @ph, @db)";
 
-                    SqlCommand cmdPerson = new SqlCommand(insertPerson, con);
-                    cmdPerson.Parameters.AddWithValue("@UserId", userId);
-                    cmdPerson.Parameters.AddWithValue("@fn", txtFirstName.Text);
-                    cmdPerson.Parameters.AddWithValue("@ln", txtLastName.Text);
-                    cmdPerson.Parameters.AddWithValue("@em", txtEmail.Text);
-                    cmdPerson.Parameters.AddWithValue("@ph", txtPhone.Text);
-                    cmdPerson.Parameters.AddWithValue("@db", txtDob.Text);
+                SqlCommand cmdPerson = new SqlCommand(insertPerson, con);
+                cmdPerson.Parameters.AddWithValue("@UserId", userId);
+                cmdPerson.Parameters.AddWithValue("@fn", txtFirstName.Text);
+                cmdPerson.Parameters.AddWithValue("@ln", txtLastName.Text);
+                cmdPerson.Parameters.AddWithValue("@em", txtEmail.Text);
+                cmdPerson.Parameters.AddWithValue("@ph", txtPhone.Text);
+                cmdPerson.Parameters.AddWithValue("@db", txtDob.Text);
 
-                    cmdPerson.ExecuteNonQuery();
+                cmdPerson.ExecuteNonQuery();
 
-                    MessageBox.Show("User registered successfully!");
-                    this.Close();
-                }
+                MessageBox.Show("User registered successfully!");
+                this.Close();
             }
+
         }
-        
+
 
         private void RegisterForm_Load(object sender, EventArgs e)
         {

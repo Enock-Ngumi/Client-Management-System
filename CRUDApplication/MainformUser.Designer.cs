@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             list = new Button();
-            btnAddUser = new Button();
-            btnEditUser = new Button();
             ChangePassword = new Button();
             LogOut = new Button();
             panelcontainer = new Panel();
@@ -47,35 +45,9 @@
             list.Name = "list";
             list.Size = new Size(196, 53);
             list.TabIndex = 0;
-            list.Text = "CLIENT LIST";
+            list.Text = "CLIENT FORM";
             list.UseVisualStyleBackColor = false;
             list.Click += list_Click;
-            // 
-            // btnAddUser
-            // 
-            btnAddUser.BackColor = Color.White;
-            btnAddUser.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnAddUser.ForeColor = Color.Maroon;
-            btnAddUser.Location = new Point(47, 183);
-            btnAddUser.Name = "btnAddUser";
-            btnAddUser.Size = new Size(196, 46);
-            btnAddUser.TabIndex = 1;
-            btnAddUser.Text = "ADD CLIENT";
-            btnAddUser.UseVisualStyleBackColor = false;
-            btnAddUser.Click += btnAddUser_Click;
-            // 
-            // btnEditUser
-            // 
-            btnEditUser.BackColor = Color.White;
-            btnEditUser.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnEditUser.ForeColor = Color.Maroon;
-            btnEditUser.Location = new Point(47, 257);
-            btnEditUser.Name = "btnEditUser";
-            btnEditUser.Size = new Size(196, 56);
-            btnEditUser.TabIndex = 2;
-            btnEditUser.Text = "EDIT CLIENT";
-            btnEditUser.UseVisualStyleBackColor = false;
-            btnEditUser.Click += btnEditUser_Click;
             // 
             // ChangePassword
             // 
@@ -88,6 +60,7 @@
             ChangePassword.TabIndex = 3;
             ChangePassword.Text = "CHANGE PASSWORD";
             ChangePassword.UseVisualStyleBackColor = false;
+            ChangePassword.Click += ChangePassword_Click;
             // 
             // LogOut
             // 
@@ -100,12 +73,13 @@
             LogOut.TabIndex = 4;
             LogOut.Text = "LOG OUT";
             LogOut.UseVisualStyleBackColor = false;
+            LogOut.Click += LogOut_Click;
             // 
             // panelcontainer
             // 
-            panelcontainer.Location = new Point(399, 127);
+            panelcontainer.Location = new Point(326, 12);
             panelcontainer.Name = "panelcontainer";
-            panelcontainer.Size = new Size(1166, 627);
+            panelcontainer.Size = new Size(774, 603);
             panelcontainer.TabIndex = 5;
             panelcontainer.Paint += panelcontainer_Paint;
             // 
@@ -144,8 +118,6 @@
             Controls.Add(panelcontainer);
             Controls.Add(LogOut);
             Controls.Add(ChangePassword);
-            Controls.Add(btnEditUser);
-            Controls.Add(btnAddUser);
             Controls.Add(list);
             Name = "MainformUser";
             Text = "MainformUser";
@@ -157,12 +129,12 @@
         #endregion
 
         private Button list;
-        private Button btnAddUser;
-        private Button btnEditUser;
         private Button ChangePassword;
         private Button LogOut;
         private Panel panelcontainer;
         private Label label1;
         private Button btnMyProfile;
+        private Button btnAddUser;
+        private Button btnEditUser;
     }
 }

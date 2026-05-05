@@ -134,7 +134,6 @@
             txtId.Size = new Size(36, 31);
             txtId.TabIndex = 5;
             txtId.Text = "ID";
-            
             // 
             // label2
             // 
@@ -185,7 +184,6 @@
             label6.Size = new Size(142, 31);
             label6.TabIndex = 10;
             label6.Text = "Date of Birth";
-            
             // 
             // numericUpDown1
             // 
@@ -239,6 +237,7 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
@@ -257,6 +256,7 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.Location = new Point(341, 150);
+            dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -269,6 +269,7 @@
             dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(743, 289);
             dataGridView1.TabIndex = 17;
             dataGridView1.CellClick += dataGridView1_CellContentClick;
@@ -284,6 +285,7 @@
             toolStrip1.Size = new Size(1107, 27);
             toolStrip1.TabIndex = 19;
             toolStrip1.Text = "toolStrip1";
+            toolStrip1.ItemClicked += toolStrip1_ItemClicked;
             // 
             // Add
             // 

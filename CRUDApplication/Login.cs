@@ -18,8 +18,8 @@ namespace Client_Management_System
     public partial class Login : Form
     {
 
-        string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
-        public static string LoggedInUsername;
+        string connectionString =
+            ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
 
         public Login()
         {
@@ -28,10 +28,11 @@ namespace Client_Management_System
 
         private void btnlog_Click(object sender, EventArgs e)
         {
-            string username = txtUser.Text.Trim();
-            string password = txtPass.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            string usernameInput = txtUser.Text.Trim();
+            string passwordInput = txtPass.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(usernameInput) || string.IsNullOrWhiteSpace(passwordInput))
             {
                 MessageBox.Show("Enter username and password");
                 return;
@@ -41,13 +42,13 @@ namespace Client_Management_System
             {
                 con.Open();
 
-                string query = @"SELECT Username, PasswordHash, Role, FailedAttempts, IsLocked
-                         FROM LoginUser
-                         WHERE Username = @User";
+                string query = @"SELECT Id, Username, PasswordHash, Role, FailedAttempts, IsLocked 
+                     FROM LoginUser 
+                     WHERE Username = @username";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@User", username);
+                    cmd.Parameters.AddWithValue("@username", usernameInput);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -57,10 +58,15 @@ namespace Client_Management_System
                             return;
                         }
 
-                        string dbPassword = reader["PasswordHash"].ToString();
+                        int userId = (int)reader["Id"];
+                        string username = reader["Username"].ToString();
+                        string hashedPassword = reader["PasswordHash"].ToString();
                         string role = reader["Role"].ToString();
+
                         int failedAttempts = Convert.ToInt32(reader["FailedAttempts"]);
                         bool isLocked = Convert.ToBoolean(reader["IsLocked"]);
+
+                        reader.Close();
 
                         if (isLocked)
                         {
@@ -68,148 +74,96 @@ namespace Client_Management_System
                             return;
                         }
 
-                        if (!PasswordHelper.VerifyPassword(password, dbPassword))
+                        bool isValid = BCrypt.Net.BCrypt.Verify(passwordInput, hashedPassword);
+
+                        if (!isValid)
                         {
-                            reader.Close();
-                            IncreaseFailedAttempts(username, failedAttempts);
+                            failedAttempts++;
 
-                            int newAttempts = failedAttempts + 1;
+                            if (failedAttempts >= 3)
+                            {
+                                string lockQuery = @"UPDATE LoginUser 
+                                         SET FailedAttempts = @fa, IsLocked = 1 
+                                         WHERE Id = @id";
 
-                            if (newAttempts >= 3)
-                                MessageBox.Show("Account locked after 3 failed attempts. Contact admin.");
-                            else
-                                MessageBox.Show($"Incorrect password. Attempts left: {3 - newAttempts}");
+                                SqlCommand lockCmd = new SqlCommand(lockQuery, con);
+                                lockCmd.Parameters.AddWithValue("@fa", failedAttempts);
+                                lockCmd.Parameters.AddWithValue("@id", userId);
+                                lockCmd.ExecuteNonQuery();
 
+                                MessageBox.Show("Account locked due to too many failed attempts.");
+                                return;
+                            }
+
+                            string failQuery = @"UPDATE LoginUser 
+                                     SET FailedAttempts = @fa 
+                                     WHERE Id = @id";
+
+                            SqlCommand failCmd = new SqlCommand(failQuery, con);
+                            failCmd.Parameters.AddWithValue("@fa", failedAttempts);
+                            failCmd.Parameters.AddWithValue("@id", userId);
+                            failCmd.ExecuteNonQuery();
+
+                            MessageBox.Show($"Invalid password. Attempts: {failedAttempts}/3");
                             return;
                         }
 
-                        reader.Close();
+                        string resetQuery = @"UPDATE LoginUser 
+                                  SET FailedAttempts = 0 
+                                  WHERE Id = @id";
 
-                        ResetFailedAttempts(username);
+                        SqlCommand resetCmd = new SqlCommand(resetQuery, con);
+                        resetCmd.Parameters.AddWithValue("@id", userId);
+                        resetCmd.ExecuteNonQuery();
 
+                        Session.UserId = userId;
                         Session.Username = username;
                         Session.Role = role;
 
-                        Permissions permissions = new Permissions();
-
-                        if ((role ?? "").Trim().Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                        Permissions permissions = new Permissions
                         {
-                            permissions.CanViewAdmin = true;
-                            permissions.CanViewClients = true;
-                            permissions.CanManageUsers = true;
+                            CanViewClients = true,
+                            CanManageUsers = (role == "Admin"),
+                            CanAddUsers = (role == "Admin"),
+                            CanEditUsers = (role == "Admin"),
+                            CanDeleteUsers = (role == "Admin"),
+                        };
 
+                        MessageBox.Show("Login successful!");
 
-                        }
+                        this.Hide();
+
+                        if (role == "Admin")
+                            new Mainform(username, permissions).Show();
                         else
-                        {
-                            permissions.CanViewAdmin = false;
-                            permissions.CanViewClients = false;
-                            permissions.CanManageUsers = false;
-
-                        } 
-                        
-
-                        DialogResult result = MessageBox.Show("Login successful!","Success",MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        if (result == DialogResult.OK)
-                        {
-                            this.Hide();
-
-                            if (role == "Admin")
-                            {
-                                new Mainform(username, permissions).Show();
-                            }
-                            else
-                            {
-                                new MainformUser(username, permissions).Show();
-                            }
-                        }
-                        Properties.Settings.Default.SavedUsername =
-                            chkRememberMe.Checked ? username : "";
-                        Properties.Settings.Default.Save();
+                            new MainformUser(username, permissions).Show();
                     }
                 }
             }
         }
-        private void ResetFailedAttempts(string username)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-
-                string query = @"UPDATE LoginUser
-                         SET FailedAttempts = 0
-                         WHERE Username = @User";
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@User", username);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        private void IncreaseFailedAttempts(string username, int currentAttempts)
-        {
-            currentAttempts++;
-
-
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-
-                string query;
-
-                if (currentAttempts >= 3)
-                {
-                    query = @"UPDATE LoginUser
-                      SET FailedAttempts = @Attempts,
-                          IsLocked = 1
-                      WHERE Username = @User";
-                }
-                else
-                {
-                    query = @"UPDATE LoginUser
-                      SET FailedAttempts = @Attempts
-                      WHERE Username = @User";
-                }
-
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Attempts", currentAttempts);
-                cmd.Parameters.AddWithValue("@User", username);
-                cmd.ExecuteNonQuery();
-            }
-        }
         private void btnforgot_Click(object sender, EventArgs e)
         {
-            string user = txtUser.Text.Trim();
-
-            if (string.IsNullOrEmpty(user))
+            if (string.IsNullOrWhiteSpace(txtUser.Text))
             {
                 MessageBox.Show("Username is required");
                 return;
             }
 
-            ChangePassword form = new ChangePassword(user);
-            form.Show();
+            new ChangePassword(txtUser.Text.Trim()).Show();
             this.Hide();
-        }
-
-        private void btnRegister_Click(object sender, EventArgs e)
-        {
-
-            RegisterForm f = new RegisterForm();
-            f.ShowDialog();
         }
 
         private void Login_Load(object sender, EventArgs e)
         {
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SavedUsername))
+            {
+                txtUser.Text = Properties.Settings.Default.SavedUsername;
+                chkRememberMe.Checked = true;
+            }
 
             txtPass.UseSystemPasswordChar = true;
             txtUser.Text = Properties.Settings.Default.SavedUsername;
-            txtPass.Focus();
-
-            txtUser.Text = Session.Username;
             txtPass.Clear();
-
             txtUser.Focus();
         }
 
@@ -218,38 +172,29 @@ namespace Client_Management_System
             txtPass.UseSystemPasswordChar = !chkShowPassword.Checked;
         }
 
-        private void picEye_Click(object sender, EventArgs e)
+        private void btnRegister_Click(object sender, EventArgs e)
         {
+            new RegisterForm().ShowDialog();
+        }
 
+        private void chkRememberMe_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkRememberMe.Checked)
+            {
+                Properties.Settings.Default.SavedUsername = txtUser.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.SavedUsername = "";
+            }
+
+            Properties.Settings.Default.Save();
         }
     }
 
 }
-    
-
-
-    
-
-
-        
-
-
-                        
-    
-    
-
-        
-    
-            
-        
-    
 
 
 
 
 
-
-
-
-
-            

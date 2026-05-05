@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using BCrypt.Net;
 
 
 
@@ -51,11 +52,17 @@ namespace Client_Management_System
             {
                 connection.Open();
 
-                string updateQuery = "UPDATE LoginUser SET PasswordHash=@Pass WHERE Username=@User";
+                string updateQuery = @"UPDATE LoginUser 
+                           SET PasswordHash=@Pass 
+                           WHERE Id=@UserId";
+
                 SqlCommand updateCmd = new SqlCommand(updateQuery, connection);
 
-                updateCmd.Parameters.Add("@Pass", SqlDbType.NVarChar).Value = txtNew.Text;
-                updateCmd.Parameters.Add("@User", SqlDbType.NVarChar).Value = _username;
+                updateCmd.Parameters.Add("@Pass", SqlDbType.NVarChar).Value =
+                    BCrypt.Net.BCrypt.HashPassword(txtNew.Text); 
+
+                updateCmd.Parameters.Add("@UserId", SqlDbType.Int).Value =
+                    Session.UserId; 
 
                 int rows = updateCmd.ExecuteNonQuery();
 
@@ -70,6 +77,7 @@ namespace Client_Management_System
                 }
             }
         }
+        
     }
 }
 

@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices.Marshalling;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using BCrypt.Net;
 
 namespace Client_Management_System
 {
@@ -26,8 +27,6 @@ namespace Client_Management_System
 
             ApplyPermissions();
         }
-
-      
         private void ApplyPermissions()
         {
             dataGridView1.ReadOnly = !_permissions.CanEditUsers;
@@ -40,14 +39,18 @@ namespace Client_Management_System
             Update.Enabled = _permissions.CanEditUsers;
             btnDelete.Enabled = _permissions.CanDeleteUsers;
         }
-
-        
         private void Form1_Load_1(object sender, EventArgs e)
         {
             LoadData();
-        }
 
-        
+            dataGridView1.Visible = false;
+
+            ClearFields();
+            numericUpDown1.Value = 0;
+
+            dataGridView1.ClearSelection();
+            dataGridView1.CurrentCell = null;
+        }
         private void LoadData()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -59,8 +62,13 @@ namespace Client_Management_System
                 dataGridView1.DataSource = dt;
             }
         }
-
-        
+        private bool IsValid()
+        {
+            return !string.IsNullOrWhiteSpace(txtFirstname.Text)
+                && !string.IsNullOrWhiteSpace(txtLastname.Text)
+                && !string.IsNullOrWhiteSpace(txtEmail.Text)
+                && !string.IsNullOrWhiteSpace(txtPhone.Text);
+        }
         private void ClearFields()
         {
             txtFirstname.Clear();
@@ -69,41 +77,16 @@ namespace Client_Management_System
             txtPhone.Clear();
             txtDob.Clear();
         }
-
-        
-        private bool IsValid()
+        private void button1_Click(object sender, EventArgs e)
         {
-            return !string.IsNullOrWhiteSpace(txtFirstname.Text)
-                && !string.IsNullOrWhiteSpace(txtLastname.Text)
-                && !string.IsNullOrWhiteSpace(txtEmail.Text)
-                && !string.IsNullOrWhiteSpace(txtPhone.Text);
+            ClearFields();
+            numericUpDown1.Value = 0;
+
+            dataGridView1.ClearSelection();
+            dataGridView1.CurrentCell = null;
+
+            txtFirstname.Focus();
         }
-
-        
-        private void AddPerson()
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-
-                string query = @"INSERT INTO persons 
-                (firstname, lastname, email, phonenumber, dateofbirth)
-                VALUES (@fn, @ln, @em, @ph, @dob)";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@fn", txtFirstname.Text);
-                    cmd.Parameters.AddWithValue("@ln", txtLastname.Text);
-                    cmd.Parameters.AddWithValue("@em", txtEmail.Text);
-                    cmd.Parameters.AddWithValue("@ph", txtPhone.Text);
-                    cmd.Parameters.AddWithValue("@dob", txtDob.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-       
         private void button2_Click(object sender, EventArgs e)
         {
             if (!_permissions.CanAddUsers)
@@ -118,24 +101,39 @@ namespace Client_Management_System
                 return;
             }
 
-            AddPerson();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string query = @"INSERT INTO persons 
+                        (firstname, lastname, email, phonenumber, dateofbirth)
+                        VALUES (@fn, @ln, @em, @ph, @dob)";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@fn", txtFirstname.Text.Trim());
+                    cmd.Parameters.AddWithValue("@ln", txtLastname.Text.Trim());
+                    cmd.Parameters.AddWithValue("@em", txtEmail.Text.Trim());
+                    cmd.Parameters.AddWithValue("@ph", txtPhone.Text.Trim());
+                    cmd.Parameters.AddWithValue("@dob", txtDob.Text);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            MessageBox.Show("User created successfully!");
             LoadData();
             ClearFields();
         }
-
-        
         private void button3_Click(object sender, EventArgs e)
         {
-            LoadData();
-        }
-
-        
-        private void button1_Click(object sender, EventArgs e)
-        {
             dataGridView1.Visible = !dataGridView1.Visible;
-        }
 
-        
+            if (dataGridView1.Visible)
+            {
+                LoadData();
+            }
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             if (!_permissions.CanEditUsers)
@@ -144,35 +142,49 @@ namespace Client_Management_System
                 return;
             }
 
+            if (dataGridView1.CurrentRow == null)
+            {
+                MessageBox.Show("Select a record first.");
+                return;
+            }
+
+            if (!IsValid())
+            {
+                MessageBox.Show("Fill all required fields.");
+                return;
+            }
+
+            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
 
-                string query = @"UPDATE persons SET
-                                firstname=@firstname,
-                                lastname=@lastname,
-                                email=@email,
-                                phonenumber=@phone,
-                                dateofbirth=@dob
-                                WHERE id=@id";
+                string query = @"UPDATE persons 
+                         SET firstname=@fn,
+                             lastname=@ln,
+                             email=@em,
+                             phonenumber=@ph,
+                             dateofbirth=@dob
+                         WHERE Id=@id";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@id", numericUpDown1.Value);
-                    cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                    cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                    cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                    cmd.Parameters.AddWithValue("@phone", txtPhone.Text);
+                    cmd.Parameters.AddWithValue("@fn", txtFirstname.Text.Trim());
+                    cmd.Parameters.AddWithValue("@ln", txtLastname.Text.Trim());
+                    cmd.Parameters.AddWithValue("@em", txtEmail.Text.Trim());
+                    cmd.Parameters.AddWithValue("@ph", txtPhone.Text.Trim());
                     cmd.Parameters.AddWithValue("@dob", txtDob.Text);
+                    cmd.Parameters.AddWithValue("@id", id);
 
                     cmd.ExecuteNonQuery();
                 }
             }
 
+            MessageBox.Show("Updated successfully!");
             LoadData();
+            ClearFields();
         }
-
-       
         private void button5_Click(object sender, EventArgs e)
         {
             if (!_permissions.CanDeleteUsers)
@@ -181,57 +193,71 @@ namespace Client_Management_System
                 return;
             }
 
-            if (dataGridView1.CurrentRow == null) return;
+            if (dataGridView1.CurrentRow == null)
+            {
+                MessageBox.Show("Select a record first.");
+                return;
+            }
 
             int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to delete this record?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+                return;
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM persons WHERE Id=@Id", con);
-                cmd.Parameters.AddWithValue("@Id", id);
-                cmd.ExecuteNonQuery();
+
+                string query = "DELETE FROM persons WHERE Id=@Id";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
             }
-
-            LoadData();
         }
-
-        
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            button2_Click(sender, e);
-        }
-
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            button4_Click(sender, e);
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            button5_Click(sender, e);
-        }
-
-       
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            var row = dataGridView1.Rows[e.RowIndex];
 
             numericUpDown1.Value = Convert.ToDecimal(row.Cells["id"].Value);
-            txtFirstname.Text = row.Cells["firstname"].Value.ToString();
-            txtLastname.Text = row.Cells["lastname"].Value.ToString();
-            txtEmail.Text = row.Cells["email"].Value.ToString();
-            txtPhone.Text = row.Cells["phonenumber"].Value.ToString();
-            txtDob.Text = row.Cells["dateofbirth"].Value.ToString();
+            txtFirstname.Text = row.Cells["firstname"].Value?.ToString();
+            txtLastname.Text = row.Cells["lastname"].Value?.ToString();
+            txtEmail.Text = row.Cells["email"].Value?.ToString();
+            txtPhone.Text = row.Cells["phonenumber"].Value?.ToString();
+            txtDob.Text = row.Cells["dateofbirth"].Value?.ToString();
         }
-
-        
         private void dataGridView1_DataError_1(object sender, DataGridViewDataErrorEventArgs e)
         {
             e.ThrowException = false;
             MessageBox.Show("Invalid data in grid.");
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

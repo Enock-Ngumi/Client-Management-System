@@ -46,7 +46,7 @@
             firstname.BackColor = Color.White;
             firstname.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             firstname.ForeColor = Color.Blue;
-            firstname.Location = new Point(27, 57);
+            firstname.Location = new Point(30, 191);
             firstname.Name = "firstname";
             firstname.Size = new Size(119, 25);
             firstname.TabIndex = 0;
@@ -59,7 +59,7 @@
             lastname.BackColor = Color.White;
             lastname.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lastname.ForeColor = Color.Blue;
-            lastname.Location = new Point(27, 125);
+            lastname.Location = new Point(27, 241);
             lastname.Name = "lastname";
             lastname.Size = new Size(114, 25);
             lastname.TabIndex = 1;
@@ -72,7 +72,7 @@
             email.BackColor = Color.White;
             email.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             email.ForeColor = Color.Blue;
-            email.Location = new Point(30, 182);
+            email.Location = new Point(30, 294);
             email.Name = "email";
             email.Size = new Size(67, 25);
             email.TabIndex = 2;
@@ -84,7 +84,7 @@
             phonenumber.BackColor = Color.White;
             phonenumber.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             phonenumber.ForeColor = Color.Blue;
-            phonenumber.Location = new Point(27, 235);
+            phonenumber.Location = new Point(30, 344);
             phonenumber.Name = "phonenumber";
             phonenumber.Size = new Size(158, 25);
             phonenumber.TabIndex = 3;
@@ -96,7 +96,7 @@
             dob.BackColor = Color.White;
             dob.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             dob.ForeColor = Color.Blue;
-            dob.Location = new Point(30, 298);
+            dob.Location = new Point(30, 395);
             dob.Name = "dob";
             dob.Size = new Size(146, 25);
             dob.TabIndex = 4;
@@ -104,35 +104,38 @@
             // 
             // txtFirstName
             // 
-            txtFirstName.Location = new Point(288, 57);
+            txtFirstName.Location = new Point(288, 191);
             txtFirstName.Name = "txtFirstName";
             txtFirstName.Size = new Size(353, 27);
             txtFirstName.TabIndex = 5;
+            txtFirstName.TextChanged += txtFirstName_TextChanged;
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(288, 235);
+            txtPhone.Location = new Point(288, 344);
             txtPhone.Name = "txtPhone";
             txtPhone.Size = new Size(353, 27);
             txtPhone.TabIndex = 6;
+            txtPhone.TextChanged += txtPhone_TextChanged;
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(288, 182);
+            txtEmail.Location = new Point(288, 294);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(353, 27);
             txtEmail.TabIndex = 7;
+            txtEmail.TextChanged += txtEmail_TextChanged;
             // 
             // txtDob
             // 
-            txtDob.Location = new Point(288, 298);
+            txtDob.Location = new Point(288, 395);
             txtDob.Name = "txtDob";
             txtDob.Size = new Size(353, 27);
             txtDob.TabIndex = 8;
             // 
             // txtLastName
             // 
-            txtLastName.Location = new Point(288, 125);
+            txtLastName.Location = new Point(288, 241);
             txtLastName.Name = "txtLastName";
             txtLastName.Size = new Size(353, 27);
             txtLastName.TabIndex = 9;
@@ -141,7 +144,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 483);
             Controls.Add(txtLastName);
             Controls.Add(txtDob);
             Controls.Add(txtEmail);

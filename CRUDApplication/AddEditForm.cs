@@ -14,76 +14,74 @@ namespace Client_Management_System
 {
     public partial class AddEditForm : Form
     {
-        int personId = 0;
+        private int personId;
         string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
         public AddEditForm()
         {
             InitializeComponent();
         }
-        public AddEditForm(int id)
+        public AddEditForm(int UserId)
         {
             InitializeComponent();
-            personId = id;
+            personId = UserId;
         }
 
         private void AddEditForm_Load(object sender, EventArgs e)
-        {
-            if (personId > 0)
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM persons WHERE Id=@Id", connection);
-                    cmd.Parameters.AddWithValue("@Id", personId);
-
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        txtFirstname.Text = reader["firstname"].ToString();
-                        txtLastname.Text = reader["lastname"].ToString();
-                        txtEmail.Text = reader["email"].ToString();
-                        txtPhone.Text = reader["phonenumber"].ToString();
-                        txtDob.Text = reader["dateofbirth"].ToString();
-                    }
-                }
-
-            }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                SqlCommand cmd;
-
-                if (personId == 0)
-                {
-                    cmd = new SqlCommand(
-                        "INSERT INTO persons (firstname, lastname, email, phonenumber, dateofbirth) VALUES (@firstname, @lastname, @email, @phonenumber, @dateofbirth)",
-                        connection);
-                }
-                else
-                {
-                    cmd = new SqlCommand(
-                        "UPDATE persons SET firstname=@firstname, lastname=@lastname, email=@email, phonenumber=@phonenumber, dateofbirth=@dateofbirth WHERE id=@id",
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT firstname, lastname, email, phonenumber, dateofbirth FROM persons WHERE UserId=@Id",
                     connection);
-                    cmd.Parameters.AddWithValue("@Id", personId);
+
+                cmd.Parameters.AddWithValue("@Id", personId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    txtFirstname.Text = reader["firstname"].ToString();
+                    txtLastname.Text = reader["lastname"].ToString();
+                    txtEmail.Text = reader["email"].ToString();
+                    txtPhone.Text = reader["phonenumber"].ToString();
+                    txtDob.Text = reader["dateofbirth"].ToString();
                 }
+            }
+        }
 
-                cmd.Parameters.AddWithValue("@firstname", txtFirstname.Text);
-                cmd.Parameters.AddWithValue("@lastname", txtLastname.Text);
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text);
-                cmd.Parameters.AddWithValue("@phonenumber", txtPhone.Text);
-                cmd.Parameters.AddWithValue("@dateofbirth", txtDob.Text);
+        private void btnSave_Click(object sender, EventArgs e)
+        {
 
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string query = @"UPDATE persons 
+                         SET firstname=@fn,
+                             lastname=@ln,
+                             email=@em,
+                             phonenumber=@ph,
+                             dateofbirth=@dob
+                         WHERE UserId=@id";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+
+                cmd.Parameters.AddWithValue("@fn", txtFirstname.Text);
+                cmd.Parameters.AddWithValue("@ln", txtLastname.Text);
+                cmd.Parameters.AddWithValue("@em", txtEmail.Text);
+                cmd.Parameters.AddWithValue("@ph", txtPhone.Text);
+                cmd.Parameters.AddWithValue("@dob", txtDob.Text);
+                cmd.Parameters.AddWithValue("@id", personId);
 
                 cmd.ExecuteNonQuery();
             }
 
+            MessageBox.Show("Profile updated successfully");
             this.Close();
         }
+
+     
     }
 }

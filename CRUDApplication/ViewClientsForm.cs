@@ -9,15 +9,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Client_Management_System
 {
     public partial class ViewClientsForm : Form
     {
+        private string _username;
         string connectionString = ConfigurationManager.ConnectionStrings["personsConnection"].ConnectionString;
-        public ViewClientsForm()
+        public ViewClientsForm(string username)
         {
             InitializeComponent();
+            _username = username;
         }
         private void LoadClients()
         {

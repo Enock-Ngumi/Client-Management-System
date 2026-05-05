@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BCrypt.Net;
+
 
 namespace Client_Management_System
 {
@@ -43,13 +45,11 @@ namespace Client_Management_System
                     {
                         if (reader.Read())
                         {
-                            txtFirstName.Text = reader["firstname"]?.ToString();
-                            txtLastName.Text = reader["lastname"]?.ToString();
-                            txtEmail.Text = reader["email"]?.ToString();
-                            txtPhone.Text = reader["phonenumber"]?.ToString();
-                            txtDob.Text = reader["dateofbirth"]?.ToString();
-
-                            reader.Close();
+                            txtFirstName.Text = reader["firstname"].ToString();
+                            txtLastName.Text = reader["lastname"].ToString();
+                            txtEmail.Text = reader["email"].ToString();
+                            txtPhone.Text = reader["phonenumber"].ToString();
+                            txtDob.Text = reader["dateofbirth"].ToString();
                         }
                     }
                 }
@@ -58,6 +58,12 @@ namespace Client_Management_System
         private void UserProfileForm_Load(object sender, EventArgs e)
         {
             LoadUserData();
+
+            txtFirstName.Enabled = false;
+            txtLastName.Enabled = false;
+            txtEmail.Enabled = false;
+            txtPhone.Enabled = false;
+            txtDob.Enabled = false;
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -66,6 +72,37 @@ namespace Client_Management_System
         }
 
         private void firstname_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            
+        }
+        
+
+        private void txtPhone_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtFirstName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtPassword_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }

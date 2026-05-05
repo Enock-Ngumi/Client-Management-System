@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Collections.Specialized.BitVector32;
+using BCrypt.Net;
 
 namespace Client_Management_System
 {
@@ -29,11 +30,14 @@ namespace Client_Management_System
 
         private void ApplyPermissions()
         {
-            bool isAdmin = Session.Role == "Admin";
+            if (btnAdmin == null || btnUserManagement == null)
+                return;
+
+            bool isAdmin = _permissions.CanManageUsers;
 
             btnAdmin.Visible = isAdmin;
             btnUserManagement.Visible = isAdmin;
-             
+
         }
 
 
@@ -50,14 +54,18 @@ namespace Client_Management_System
                 MessageBox.Show("Access denied.");
                 return;
             }
+            
+                Form1 f = new Form1(_permissions);
+                f.Show();
+                
+            
 
-            Form1 f = new Form1(_permissions);
-            f.Show();
+                
         }
 
         private void btnChangePassword_Click_1(object sender, EventArgs e)
         {
-            ChangePassword f = new ChangePassword(Session.Username);
+            ChangePassword f = new ChangePassword(_username);
             f.Show();
         }
 
@@ -90,8 +98,8 @@ namespace Client_Management_System
 
         private void button4_Click(object sender, EventArgs e)
         {
-            AddEditForm f = new AddEditForm();
-            f.Show();
+            ViewClientsForm v = new ViewClientsForm(Session.Username);
+            v.Show();
         }
 
         private void button3_Click(object sender, EventArgs e)

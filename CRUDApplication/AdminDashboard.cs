@@ -67,6 +67,7 @@ namespace Client_Management_System
                 cmd.Parameters.AddWithValue("@Role", role);
 
                 cmd.ExecuteNonQuery();
+                LoadData();
 
                 MessageBox.Show("User created successfully!");
 
@@ -136,13 +137,29 @@ namespace Client_Management_System
 
         private void dataGridViewUsers_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            LoadLockedUsers();
         }
 
         private void AdminDashboard_Load(object sender, EventArgs e)
         {
             LoadLockedUsers();
         }
-    }
+        private void LoadData()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
 
+                string query = @"SELECT Username, Role, FailedAttempts, IsLocked
+                         FROM LoginUser";
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                DataTable dt = new DataTable();
+
+                da.Fill(dt);
+
+                dataGridViewUsers.DataSource = dt;
+            }
+        }
+
+    }
 }

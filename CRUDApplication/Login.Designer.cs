@@ -34,7 +34,6 @@ namespace Client_Management_System
             txtUser = new TextBox();
             txtPass = new TextBox();
             btnlog = new Button();
-            btnforgot = new Button();
             btnRegister = new Button();
             chkRememberMe = new CheckBox();
             chkShowPassword = new CheckBox();
@@ -81,26 +80,13 @@ namespace Client_Management_System
             btnlog.BackColor = Color.White;
             btnlog.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnlog.ForeColor = Color.FromArgb(255, 128, 0);
-            btnlog.Location = new Point(262, 381);
+            btnlog.Location = new Point(523, 381);
             btnlog.Name = "btnlog";
             btnlog.Size = new Size(170, 40);
             btnlog.TabIndex = 4;
             btnlog.Text = "LOGIN";
             btnlog.UseVisualStyleBackColor = false;
             btnlog.Click += btnlog_Click;
-            // 
-            // btnforgot
-            // 
-            btnforgot.BackColor = Color.White;
-            btnforgot.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnforgot.ForeColor = Color.FromArgb(255, 128, 0);
-            btnforgot.Location = new Point(479, 381);
-            btnforgot.Name = "btnforgot";
-            btnforgot.Size = new Size(259, 40);
-            btnforgot.TabIndex = 5;
-            btnforgot.Text = "FORGOT PASSWORD";
-            btnforgot.UseVisualStyleBackColor = false;
-            btnforgot.Click += btnforgot_Click;
             // 
             // btnRegister
             // 
@@ -127,6 +113,7 @@ namespace Client_Management_System
             chkRememberMe.TabIndex = 7;
             chkRememberMe.Text = "Remember me";
             chkRememberMe.UseVisualStyleBackColor = false;
+            chkRememberMe.CheckedChanged += chkRememberMe_CheckedChanged;
             // 
             // chkShowPassword
             // 
@@ -147,7 +134,6 @@ namespace Client_Management_System
             Controls.Add(chkShowPassword);
             Controls.Add(chkRememberMe);
             Controls.Add(btnRegister);
-            Controls.Add(btnforgot);
             Controls.Add(btnlog);
             Controls.Add(txtPass);
             Controls.Add(txtUser);
@@ -169,7 +155,6 @@ namespace Client_Management_System
         private TextBox txtUser;
         private TextBox txtPass;
         private Button btnlog;
-        private Button btnforgot;
         private Button btnRegister;
         private CheckBox chkRememberMe;
         private CheckBox chkShowPassword;

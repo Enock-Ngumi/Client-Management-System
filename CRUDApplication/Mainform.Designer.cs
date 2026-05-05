@@ -1,4 +1,6 @@
-﻿namespace Client_Management_System
+﻿using System.Security;
+
+namespace Client_Management_System
 {
     partial class Mainform
     {
@@ -33,7 +35,6 @@
             btnChangePassword = new Button();
             label1 = new Label();
             btnAdmin = new Button();
-            button2 = new Button();
             logout = new Button();
             button4 = new Button();
             inactivityTimer = new System.Windows.Forms.Timer(components);
@@ -59,7 +60,7 @@
             btnChangePassword.FlatStyle = FlatStyle.Popup;
             btnChangePassword.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnChangePassword.ForeColor = Color.FromArgb(0, 0, 192);
-            btnChangePassword.Location = new Point(11, 315);
+            btnChangePassword.Location = new Point(12, 247);
             btnChangePassword.Name = "btnChangePassword";
             btnChangePassword.Size = new Size(224, 48);
             btnChangePassword.TabIndex = 2;
@@ -92,20 +93,6 @@
             btnAdmin.Text = "ADMIN";
             btnAdmin.UseVisualStyleBackColor = false;
             btnAdmin.Click += btnAdmin_Click;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.White;
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button2.ForeColor = Color.FromArgb(0, 0, 192);
-            button2.Location = new Point(11, 248);
-            button2.Name = "button2";
-            button2.Size = new Size(224, 36);
-            button2.TabIndex = 5;
-            button2.Text = "SETTINGS";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
             // 
             // logout
             // 
@@ -148,7 +135,6 @@
             ClientSize = new Size(800, 450);
             Controls.Add(button4);
             Controls.Add(logout);
-            Controls.Add(button2);
             Controls.Add(btnAdmin);
             Controls.Add(label1);
             Controls.Add(btnChangePassword);
@@ -165,9 +151,10 @@
         private Button btnChangePassword;
         private Label label1;
         private Button btnAdmin;
-        private Button button2;
         private Button logout;
         private Button button4;
         private System.Windows.Forms.Timer inactivityTimer;
+
+
     }
 }
